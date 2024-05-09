@@ -1,16 +1,12 @@
 create extension postgres_fdw;
-
+create extension dblink;
+-- Configuracion para hacer la conexion con el servidor central
 create server comedor_central_pfw
 	foreign data wrapper postgres_fdw
 	options (host 'localhost',dbname 'comedor',port '5432')
-
 create user mapping for postgres
 	server comedor_central_pfw
 		options(user 'postgres',password 'admin')	
-
-CREATE FOREIGN TABLE central_sequence_table (
-    id serial
-)
 SERVER comedor_central_pfw;
 
 create table clientes (
@@ -24,21 +20,44 @@ create table clientes (
 );
 create subscription ingresoClientes connection 'host=localhost port=5432 dbname=comedor user=postgres password=admin' publication nuevosClientes
 
+select * from clientes
 -- Histórico de Ventas
+
 create table historico_Ventas (
-    venta_id int DEFAULT nextval('central_sequence_table_id_seq') Primary key,
-    cedula_Cliente int REFERENCES clientes(cedula),
+    venta_id int Primary key,
+    cedula_Cliente int not null REFERENCES clientes(cedula),
     fecha timestamp not null default now(),
     descripcion varchar(100) not null,
 	monto_total float not null
-	
 );
+
+CREATE OR REPLACE procedure insertar_venta(
+    IN cedula_cliente INT,
+    IN descripcion VARCHAR(100),
+    IN monto_total FLOAT
+)
+as $$
+declare
+    siguiente_valor INT;
+BEGIN
+    Select valor_dblink into siguiente_valor
+	FROM dblink('comedor_central_pfw', 'SELECT obtener_siguiente_valor_secuencia()')AS t(valor_dblink INT);
+    -- Insertar el nuevo registro en la tabla historico_ventas
+	
+    INSERT INTO historico_ventas (venta_id, cedula_cliente, descripcion, monto_total)
+    VALUES (siguiente_valor, cedula_cliente, descripcion, monto_total);
+END;
+$$ LANGUAGE plpgsql;
+
+call insertar_venta(208410988, 'Cena', 2600);
+select * from historico_ventas
+
 create publication NuevasVentas for table historico_Ventas
 --insert into historico_Ventas(descripcion, monto_total)values('venta de almuerzo',2500)
 
 create table productos (
-    Codigo VARCHAR(25) PRIMARY KEY,
-    Nombre VARCHAR(100) not null,
+    Codigo varchar(25) PRIMARY KEY,
+    Nombre varchar(100) not null,
 	cantidad_Disponible int not null default(0),
-    Precio_Unitario int not null default (0)
+    Precio int not null default (0)
 );

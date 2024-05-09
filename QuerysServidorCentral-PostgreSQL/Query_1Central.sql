@@ -23,6 +23,10 @@ create table clientes (
 	telefono varchar(20)not null,
 	codigoQR varchar(500) not null Unique
 );
+insert into clientes (cedula, nombre, apellido1, apellido2, correo, telefono, codigoQR)
+values (208410988,'Walter','Lazo','Gonzalez','wlksdfdsf','82392832',''),
+		(29990032,'Leiner','Alvarado','Rodriguez','sdfsdfjss','2313213213','--');
+
 create publication nuevosClientes for table clientes
 
 create table monedero_Electronico (
@@ -72,17 +76,26 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
-drop table historico_Ventas
 
 -- Histórico de Ventas
 create table historico_Ventas (
-    venta_id int PRIMARY KEY,
-    cedula_Cliente int REFERENCES clientes(cedula),
+    venta_id int Primary key,
+    cedula_Cliente int not null REFERENCES clientes(cedula),
     fecha timestamp not null default now(),
     descripcion varchar(100) not null,
 	monto_total float not null
 );
 CREATE SEQUENCE secuencia_clave_primaria;
+CREATE OR REPLACE FUNCTION obtener_siguiente_valor_secuencia()
+RETURNS INT AS $$
+DECLARE
+    siguiente_valor INT;
+BEGIN
+    SELECT NEXTVAL('secuencia_clave_primaria') INTO siguiente_valor;
+    RETURN siguiente_valor;
+END;
+$$ LANGUAGE plpgsql;
+
 create subscription ingresoVentas connection 'host=localhost port=5433 dbname=NodoComedor user=postgres password=admin123' publication NuevasVentas
 
 select * from historico_Ventas
