@@ -40,7 +40,7 @@ CREATE TABLE historico_Ventas (
     descripcion VARCHAR(100) NOT NULL,
     monto_total FLOAT NOT NULL
 );
-drop procedure InsertarVenta
+
 CREATE PROCEDURE InsertarVenta
     @cedula_Cliente INT,
     @descripcion VARCHAR(100),
@@ -59,7 +59,7 @@ BEGIN
     INSERT INTO historico_Ventas (venta_id, cedula_Cliente, fecha, descripcion, monto_total)
     VALUES (@siguiente_venta_id, @cedula_Cliente, GETDATE(), @descripcion, @monto_total);
 
-	INSERT INTO comedor_central_linkedserver."public".historico_Ventas (venta_id, cedula_cliente, descripcion, monto_total)
+	INSERT INTO comedor_central_linkedserver.comedor."public".historico_ventas (venta_id, cedula_Cliente, descripcion, monto_total)
 	VALUES (@siguiente_venta_id, @cedula_Cliente, @descripcion, @monto_total);
 END;
 -- Llamar al procedimiento InsertarVenta con los valores proporcionados
