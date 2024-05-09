@@ -1,22 +1,17 @@
---Nodo hacia el servidor central desde SQL Server
---Conexiones remotas a otros servidores
+-- Crear un Linked Server en SQL Server para acceder a PostgreSQL
+EXEC sp_addlinkedserver @server='comedor_central_linkedserver', @srvproduct='PostgreSQL', @provider='MSDASQL', @datasrc='PostgreSQL35W';
 
-create extension odbc_fdw
+-- Configurar la autenticación para el Linked Server
+EXEC sp_addlinkedsrvlogin 'comedor_central_linkedserver', 'true', NULL, 'postgres', 'admin';
 
-CREATE SERVER sqlServer
-	FOREIGN DATA WRAPPER odbc_fdw 
-	OPTIONS (dsn 'sqlServer_DSN');
 
-CREATE USER MAPPING FOR postgres
-	SERVER sqlServer
-	OPTIONS (odbc_UID 'usr_basesII', odbc_PWD 'usr_basesII');
-
-create schema externalSQLSERVER
-
-IMPORT FOREIGN SCHEMA dbo
-	FROM SERVER  sqlServer
-	INTO externalSQLSERVER
-
-select * from externalsqlserver.usuarios
-
-INSERT INTO  externalsqlserver.usuarios VALUES (2,'ANA',18000)
+-- Crear una tabla en SQL Server que mapee a la tabla en PostgreSQL
+CREATE TABLE dbo.clientes (
+    cedula INT PRIMARY KEY,
+    nombre VARCHAR(25) NOT NULL,
+    apellido1 VARCHAR(25) NOT NULL,
+    apellido2 VARCHAR(25) NOT NULL,
+    correo VARCHAR(50) NOT NULL,
+    telefono VARCHAR(20) NOT NULL,
+    codigoQR VARCHAR(500) NOT NULL UNIQUE
+);

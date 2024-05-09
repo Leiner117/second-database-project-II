@@ -82,7 +82,7 @@ create table historico_Ventas (
     descripcion varchar(100) not null,
 	monto_total float not null
 );
-
+CREATE SEQUENCE secuencia_clave_primaria;
 create subscription ingresoVentas connection 'host=localhost port=5433 dbname=NodoComedor user=postgres password=admin123' publication NuevasVentas
 
 select * from historico_Ventas
