@@ -4,10 +4,6 @@ EXEC sp_addlinkedserver @server='comedor_central_linkedserver', @srvproduct='Pos
 EXEC sp_addlinkedsrvlogin 'comedor_central_linkedserver', 'true', NULL, 'postgres', 'admin';
 EXEC sp_serveroption @server='comedor_central_linkedserver', @optname='rpc out', @optvalue='true';
 
--- Insertar datos en una tabla existente en PostgreSQL desde SQL Server
-INSERT INTO comedor_central_linkedserver.comedor."public".clientes (cedula, nombre,apellido1,apellido2,correo,telefono,codigoQR)
-VALUES (208410988,'Walter','Lazo','Gonzalez','wlksdfdsf','82392832','');
-
 -- Crear la tabla clientes en SQL Server
 CREATE TABLE clientes (
     cedula INT PRIMARY KEY,
