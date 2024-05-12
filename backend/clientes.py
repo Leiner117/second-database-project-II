@@ -28,3 +28,20 @@ def enviar_datos_clientes():
         except Exception as e:
              # Hacer rollback en caso de error
             return jsonify({'error': str(e)})
+        
+#ELIMINAR CLIENTE
+@clientes.route('/clientes', methods=['DELETE'])
+def eliminar_cliente():
+    with app.app_context():
+        datos_nuevos = request.json.get('datos', [])
+        cedula = datos_nuevos[0]['cedula']
+        try:
+            query = """
+            DELETE FROM clientes WHERE cedula = %s
+            """
+            cursor.execute(query, (cedula,))
+            conn.commit()
+            return jsonify({'mensaje': 'Cliente eliminado correctamente'})
+        except Exception as e:
+             # Hacer rollback en caso de error
+            return jsonify({'error': str(e)})

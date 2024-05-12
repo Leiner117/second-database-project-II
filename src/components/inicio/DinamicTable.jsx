@@ -1,6 +1,7 @@
 import React, { useState,useEffect } from "react";
 import { Card, CardBody, CardFooter, Image, ScrollShadow, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, useDisclosure } from "@nextui-org/react";
-
+import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Checkbox, Input, Link} from "@nextui-org/react";
+import QRScanner from '../qr'
 
 const columns = [
   {
@@ -24,6 +25,10 @@ const columns = [
 export default function App() {
   const [itemsSeleccionados, setItemsSeleccionados] = useState([]);
   const [productos, setProductos] = useState([]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const calcularTotal = () => {
+    return itemsSeleccionados.reduce((total, item) => total + item.Precio * item.Cantidad, 0);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,8 +58,13 @@ export default function App() {
       // Si no está seleccionado, añadirlo a la lista de ítems seleccionados
       setItemsSeleccionados([...itemsSeleccionados, { ...item, Cantidad: 1 }]);
     }
-  };
 
+  };
+  const handleQRCodeDetected = (qrCodeData) => {
+    console.log('QR code detected:', qrCodeData);
+    onClose(); // Cierra el modal cuando se detecta un código QR
+  };
+  
   return (
     <div className="flex flex-row items-start justify-start h-screen p-4">
       <div className="flex flex-col items-start justify-start mb-8">
@@ -97,7 +107,19 @@ export default function App() {
           </TableBody>
         </Table>
         <Button onPress={() => setItemsSeleccionados([])}  className="mt-4">Limpiar carrito</Button>
-        
+        <Button onPress={onOpen} className="mt-4 ml-4">Vender</Button>
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalContent>
+            <ModalHeader>Escanear comprador</ModalHeader>
+            <ModalBody>
+              <p>Total: {calcularTotal()}</p>
+              <QRScanner onQRCodeDetected={handleQRCodeDetected} />
+            </ModalBody>
+            <ModalFooter>
+              <Button color="primary" auto onClick={onClose}>Cerrar</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </div>
     </div>
   );

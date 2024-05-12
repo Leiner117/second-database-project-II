@@ -9,52 +9,47 @@ import { Select, SelectItem } from "@nextui-org/react";
 export default function App() {
 
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
-    const [nombre, setNombre] = useState("");
-    const [apellido1, setApellido1] = useState("");
-    const [apellido2, setApellido2] = useState("");
-    const [cedula, setCedula] = useState("");
-    const [telefono, setTelefono] = useState("");
-    const [correo, setCorreo] = useState("");
+    const [codigo, setCodigo] = useState("");
+    const [nombre, setNombre] = React.useState("");
+    const [cantidad_disponible, setCantidad_disponible] = useState("");
+    const [precio, setPrecio] = useState("");
     const [value, setValue] = useState("");
   
 
 
   const handleSelectionChange = (e) => {
     setValue(e.target.value);
-    setNombre(e.target.value);
+    setCodigo(e.target.value);
 
 
-    for (let i = 0; i < clientes.length; i++) {
-        console.log(clientes[i].Nombre);
-      if (clientes[i].Cedula == e.target.value) {
+    for (let i = 0; i < productos.length; i++) {
+        console.log(productos[i].Codigo);
+      if (productos[i].Codigo == e.target.value) {
 
-        setNombre(clientes[i].Nombre);
-        setApellido1(clientes[i].Apellido1);
-        setApellido2(clientes[i].Apellido2);
-        setCedula(clientes[i].Cedula);
-        setTelefono(clientes[i].Telefono);
-        setCorreo(clientes[i].Correo);
+        setNombre(productos[i].Nombre);
+        setCantidad_disponible(productos[i].Cantidad_disponible);
+        setPrecio(productos[i].Precio);
       }
     }
   };
 
-  const [clientes, setClientes] = useState([]);
+  const [productos, setProductos] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       // Realiza la solicitud al servidor para obtener datos de la base de datos
-      const response = await fetch("http://localhost:5000/clientes");
+      const response = await fetch("http://localhost:5000/productos");
       const data = await response.json();   
-      setClientes(data); // Ajusta según la estructura de tu respuesta del servidor
+      setProductos(data); // Ajusta según la estructura de tu respuesta del servidor
     };
   
     fetchData();
   }, []);
 
 
-  const eliminarCliente = async() => {
+  const eliminarProductos = async() => {
     try {
-      const response = await fetch('http://localhost:5000/clientes', {
+      const response = await fetch('http://localhost:5000/productos', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -62,7 +57,7 @@ export default function App() {
         body: JSON.stringify({
           datos: [
             {
-              'cedula': cedula,
+              'codigo': codigo,
             },
           ],
         }),
@@ -73,7 +68,7 @@ export default function App() {
       }
   
       const data = await response.json();
-      console.log(data);
+    
       window.location.reload();
   
     } catch (error) {
@@ -84,7 +79,7 @@ export default function App() {
 
   return (
     <>
-      <Button onPress={onOpen} color="danger">Eliminar Clientes</Button>
+      <Button onPress={onOpen} color="danger">Eliminar Producto</Button>
       <Modal 
         isOpen={isOpen} 
         onOpenChange={onOpenChange}
@@ -94,7 +89,7 @@ export default function App() {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">Eliminar Cliente</ModalHeader>
+              <ModalHeader className="flex flex-col gap-1">Eliminar Producto</ModalHeader>
               <ModalBody>
 
               <div className="flex w-full max-w-xs flex-col gap-2">
@@ -105,20 +100,20 @@ export default function App() {
                 className="max-w-xs"
                 onChange={handleSelectionChange}
               >
-                {clientes.map((cliente) => (
-                  <SelectItem key={cliente.Cedula} value={cliente.Cedula}>
-                    {cliente.Cedula}
+                {productos.map((producto) => (
+                  <SelectItem key={producto.Codigo} value={producto.Codigo}>
+                    {producto.Codigo}
                   </SelectItem>
                 ))}
               </Select>
               </div>
 
               <Input
-                  label="Nombre"
-                  placeholder="Seleccione un nombre"
+                  label="Codigo"
+                  placeholder="Seleccione un codigo"
                   variant="bordered"
-                  value={nombre}
-                  onValueChange={setNombre}
+                  value={codigo}
+                  onValueChange={setCodigo}
                   readOnly
                 />
                 
@@ -129,7 +124,7 @@ export default function App() {
                 <Button color="danger" variant="flat" onPress={onClose}>
                   Cerrar
                 </Button>
-                <Button color="danger" onPressStart={eliminarCliente} onPressEnd={onClose}>
+                <Button color="danger" onPressStart={eliminarProductos} onPressEnd={onClose}>
                   Eliminar
                 </Button>
               </ModalFooter>

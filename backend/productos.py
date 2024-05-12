@@ -31,3 +31,39 @@ def enviar_datos_productos():
         except Exception as e:
              # Hacer rollback en caso de error
             return jsonify({'error': str(e)})
+
+#ELIMINAR PRODUCTO
+@productos.route('/productos', methods=['DELETE'])
+def eliminar_producto():
+    with app.app_context():
+        datos_nuevos = request.json.get('datos', [])
+        codigo = datos_nuevos[0]['codigo']
+        try:
+            query = """
+            DELETE FROM productos WHERE codigo = %s
+            """
+            cursor.execute(query, (codigo,))
+            conn.commit()
+            return jsonify({'mensaje': 'Producto eliminado correctamente'})
+        except Exception as e:
+             # Hacer rollback en caso de error
+            return jsonify({'error': str(e)})
+
+#Agregar cantidad de PRODUCTO
+@productos.route('/productos', methods=['PUT'])
+def agregar_cantidad_producto():
+    with app.app_context():
+        datos_nuevos = request.json.get('datos', [])
+        codigo = datos_nuevos[0]['codigo']
+        cantidad = datos_nuevos[0]['cantidad_disponible']
+        print(datos_nuevos)
+        try:
+            query = """
+            UPDATE productos SET cantidad_disponible = cantidad_disponible + %s WHERE codigo = %s
+            """
+            cursor.execute(query, (cantidad, codigo))
+            conn.commit()
+            return jsonify({'mensaje': 'Cantidad de producto actualizada correctamente'})
+        except Exception as e:
+             # Hacer rollback en caso de error
+            return jsonify({'error': str(e)})

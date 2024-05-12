@@ -3,7 +3,8 @@ import Layout from '../layouts/Layout.astro';
 import Sidebar from '../components/Sidebar.astro';
 import TablaProductos from '../components/TablaProductos';
 import ModalAgregarProductos from '../components/ModalAgregarProducto';
-
+import ModalEliminarProducto from '../components/ModalEliminarProducto';
+import ModalAgregarMasProductos from '../components/ModalAgregarMasProductos';
 ---
 
 <Layout title="Pagina principal">
@@ -18,12 +19,14 @@ import ModalAgregarProductos from '../components/ModalAgregarProducto';
                 <Sidebar />
                 <!-- Contenido principal -->
                 <main class="w-full p-4">
-                    <h1 class="text-2xl font-semibold">Clientes</h1>
+                    <h1 class="text-2xl font-semibold">Productos</h1>
                     <TablaProductos client:visible></TablaProductos>
             </div>
             <div class = "flex gap-4">
                 <ModalAgregarProductos client:visible></ModalAgregarProductos>
-                
+                <ModalEliminarProducto client:visible></ModalEliminarProducto>
+                <ModalAgregarMasProductos client:visible></ModalAgregarMasProductos>
+
             </div>
             
         </body>

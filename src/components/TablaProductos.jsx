@@ -11,6 +11,7 @@ export default function TablaClientes() {
       // Realiza la solicitud al servidor para obtener datos de la base de datos
       const response = await fetch("http://127.0.0.1:5000/productos");
       const data = await response.json();
+      console.log (data);
       setProductos(data); // Ajusta según la estructura de tu respuesta del servidor
     };
   

@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Sidebar from '../components/Sidebar.astro';
 import TablaClientes from '../components/TablaClientes';
 import ModalAgregarCliente from '../components/ModalAgregarCliente';
+import ModalEliminarCliente from '../components/ModalEliminarCliente';
 
 ---
 
@@ -23,7 +24,7 @@ import ModalAgregarCliente from '../components/ModalAgregarCliente';
             </div>
             <div class = "flex gap-4">
                 <ModalAgregarCliente client:visible></ModalAgregarCliente>
-                
+                <ModalEliminarCliente client:visible></ModalEliminarCliente>
             </div>
             
         </body>
