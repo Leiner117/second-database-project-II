@@ -28,6 +28,7 @@ export default function App() {
       // Realiza la solicitud al servidor para obtener datos de la base de datos
       const response = await fetch("http://localhost:5000/productos");
       const data = await response.json();
+      console.log(data);  
       setProductos(data); // Ajusta según la estructura de tu respuesta del servidor
     };
   
@@ -96,8 +97,8 @@ export default function App() {
                 
               >
                 {productos.map((producto) => (
-                  <SelectItem key={producto.Nombre} value={producto.Nombre}>
-                    {producto.Nombre}
+                  <SelectItem key={producto.Codigo} value={producto.Codigo}>
+                    {producto.Codigo}
                   </SelectItem>
                 ))}
               </Select>

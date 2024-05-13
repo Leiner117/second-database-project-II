@@ -60,9 +60,40 @@ export default function App() {
     }
 
   };
-  const handleQRCodeDetected = (qrCodeData) => {
+  const handleQRCodeDetected = async (qrCodeData) => {
+    if (!qrCodeData) {
+      return;
+    }
     console.log('QR code detected:', qrCodeData);
     onClose(); // Cierra el modal cuando se detecta un código QR
+    try {
+      const response = await fetch('http://localhost:5000/compra', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          datos: [
+            {
+              'InfoQR': qrCodeData,
+              'total':calcularTotal(),
+              'productos':itemsSeleccionados
+            },
+          ],
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Error al enviar datos al servidor');
+      }
+  
+      const data = await response.json();
+      console.log(data);
+      window.location.reload();
+  
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
   
   return (
