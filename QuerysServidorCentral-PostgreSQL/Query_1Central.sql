@@ -35,30 +35,26 @@ create table monedero_Electronico (
     FOREIGN KEY (cliente_cedula) REFERENCES clientes(cedula)
 );
 
-create or replace function recargar_monedero(
+CREATE OR REPLACE PROCEDURE recargar_monedero(
     usuario_id INT,
-    monto_recarga float
+    monto_recarga FLOAT
 )
-RETURNS VOID AS
-$$
+
+AS $$
 BEGIN
     -- Actualizar el saldo del monedero electrónico del usuario
     UPDATE Monedero_Electronico
     SET saldo = saldo + monto_recarga
-    WHERE cliente_id = usuario_id;
-    
-    -- Completar la transacción
-    COMMIT;
+    WHERE cliente_cedula = usuario_id;
 END;
 $$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION rebajar_monedero(
+CREATE OR REPLACE PROCEDURE rebajar_monedero(
     usuario_id INT,
-    monto_rebaja float
+    monto_rebaja FLOAT
 )
-RETURNS VOID AS
-$$
+AS $$
 BEGIN
     -- Verificar si el monto de rebaja es menor o igual al saldo actual del monedero
     IF monto_rebaja <= (SELECT saldo FROM Monedero_Electronico WHERE cliente_cedula = usuario_id) THEN
@@ -76,6 +72,7 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+select * from Monedero_Electronico
 
 -- Histórico de Ventas
 create table historico_Ventas (

@@ -55,6 +55,43 @@ select * from historico_ventas
 create publication NuevasVentas for table historico_Ventas
 --insert into historico_Ventas(descripcion, monto_total)values('venta de almuerzo',2500)
 
+CREATE OR REPLACE procedure aplicar_Recarga(
+    IN cedula_cliente INT,
+    IN monto_Recargar FLOAT
+)
+as $$    
+-- Realizar la recarga del monedero electrónico del cliente en la otra base de datos
+    BEGIN
+        PERFORM dblink_exec('comedor_central_pfw', format('Call recargar_monedero(%s, %s)', cedula_cliente, monto_Recargar));
+    EXCEPTION
+        WHEN OTHERS THEN
+            -- Manejar la excepción aquí, por ejemplo, lanzando un mensaje de error
+           RAISE EXCEPTION 'Error al recargar el monedero electrónico del cliente';
+	commit;
+END;
+$$ LANGUAGE plpgsql;
+call aplicar_Recarga(208410988,2500 );
+
+
+
+CREATE OR REPLACE procedure aplicar_Rebaja(
+    IN cedula_cliente INT,
+    IN monto_Rebaja FLOAT
+)
+as $$    
+-- Realizar la recarga del monedero electrónico del cliente en la otra base de datos
+    BEGIN
+        PERFORM dblink_exec('comedor_central_pfw', format('Call rebajar_monedero(%s, %s)', cedula_cliente, monto_Rebaja));
+    EXCEPTION
+        WHEN OTHERS THEN
+            -- Manejar la excepción aquí, por ejemplo, lanzando un mensaje de error
+           RAISE EXCEPTION 'Error al recargar el monedero electrónico del cliente';
+END;
+$$ LANGUAGE plpgsql;
+call aplicar_Rebaja(208410988,2500);
+
+
+
 create table productos (
     Codigo varchar(25) PRIMARY KEY,
     Nombre varchar(100) not null,
