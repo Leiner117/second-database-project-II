@@ -2,6 +2,10 @@ import React from "react";
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Checkbox, Input, Link} from "@nextui-org/react";
 
 
+/**
+ * Component for adding a product through a modal.
+ * @returns {JSX.Element} The rendered component.
+ */
 export default function App() {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const [codigo, setCodigo] = React.useState("");
@@ -9,8 +13,10 @@ export default function App() {
   const [cantidad_disponible, setCantidad_disponible] = React.useState("");
   const [precio, setPrecio] = React.useState("");
 
-
-
+  /**
+   * Function to add a product by sending a POST request to the server.
+   * @returns {Promise<void>} A promise that resolves when the product is added successfully.
+   */
   const agregarProducto = async() => {
     try {
       const response = await fetch('http://localhost:5000/productos', {
@@ -44,6 +50,7 @@ export default function App() {
       // Puedes manejar el error según tus necesidades, por ejemplo, mostrar un mensaje al usuario.
     }
   };
+
   return (
     <>
       <Button onPress={onOpen} color="primary">Agregar Productos</Button>

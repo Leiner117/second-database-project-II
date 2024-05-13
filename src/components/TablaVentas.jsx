@@ -3,6 +3,11 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKey
 
 
 
+/**
+ * Renders a table component that displays sales data.
+ *
+ * @returns {JSX.Element} The table component.
+ */
 export default function TablaVentas() {
   const [ventas, setVentas] = useState([]);
 

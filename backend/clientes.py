@@ -6,6 +6,12 @@ clientes = Blueprint('clientes', __name__)
 #obtener todos los productos
 @clientes.route('/clientes', methods=['GET'])
 def obtener_datos_clientes():
+    """
+    Obtains data from the 'clientes' table in the database.
+
+    Returns:
+        A JSON response containing the data of all clients.
+    """
     cursor.execute('SELECT * FROM clientes')
     rows = cursor.fetchall()
     datos = [{'Cedula':row[0],'Nombre':row[1],'Apellido1':row[2],'Apellido2':row[3],'Correo':row[4],'Telefono':row[5]} for row in rows]
@@ -13,6 +19,14 @@ def obtener_datos_clientes():
 
 @clientes.route('/clientes', methods=['POST'])
 def enviar_datos_clientes():
+    """
+    Endpoint to receive and store client data.
+
+    This function receives a JSON payload containing client data and inserts it into the 'clientes' table in the database.
+
+    Returns:
+        A JSON response indicating the success or failure of the operation.
+    """
     with app.app_context():
         datos_nuevos = request.json.get('datos', [])
         print(datos_nuevos)
@@ -32,6 +46,12 @@ def enviar_datos_clientes():
 #ELIMINAR CLIENTE
 @clientes.route('/clientes', methods=['DELETE'])
 def eliminar_cliente():
+    """
+    Endpoint to delete a client from the database.
+
+    Returns:
+        A JSON response indicating the success or failure of the operation.
+    """
     with app.app_context():
         datos_nuevos = request.json.get('datos', [])
         cedula = datos_nuevos[0]['cedula']

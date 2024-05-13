@@ -6,6 +6,11 @@ import { Select, SelectItem } from "@nextui-org/react";
 
 
 
+/**
+ * ModalAgregarMasProductos component.
+ * 
+ * @returns {JSX.Element} The rendered ModalAgregarMasProductos component.
+ */
 export default function App() {
 
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
@@ -27,8 +32,7 @@ export default function App() {
     const fetchData = async () => {
       // Realiza la solicitud al servidor para obtener datos de la base de datos
       const response = await fetch("http://localhost:5000/productos");
-      const data = await response.json();
-      console.log(data);  
+      const data = await response.json();  
       setProductos(data); // Ajusta según la estructura de tu respuesta del servidor
     };
   
@@ -37,7 +41,6 @@ export default function App() {
 
 
   const modifificarCantidad = async() => {
-    console.log(codigo);
     try {
       const response = await fetch('http://localhost:5000/productos', {
         method: 'PUT',

@@ -2,6 +2,11 @@ import { useState,useEffect } from 'react';
 import { Input, Button } from '@nextui-org/react';
 
 import { Select, SelectItem } from "@nextui-org/react";
+/**
+ * Component for reloading a wallet.
+ *
+ * @returns {JSX.Element} The JSX element representing the RecargarMonedero component.
+ */
 function RecargarMonedero() {
   const [cliente, setCliente] = useState('');
   const [cantidad, setCantidad] = useState('');

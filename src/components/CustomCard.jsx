@@ -2,6 +2,10 @@ import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 import { ScrollShadow } from "@nextui-org/react";
 import { useState } from "react";
 
+/**
+ * CustomCard component.
+ * Renders a list of cards with images and information.
+ */
 export default function App() {
   const list = [
     {
@@ -31,23 +35,30 @@ export default function App() {
   ];
   const [itemsSeleccionados, setItemsSeleccionados] = useState([]);
 
-const handleItemPress = (item) => {
-  // Verificar si el ítem ya está seleccionado
-  const itemIndex = itemsSeleccionados.findIndex((selectedItem) => selectedItem.key === item.key);
+  /**
+   * Handles the press event when an item is selected.
+   * If the item is already selected, it increments the quantity.
+   * If the item is not selected, it adds it to the list of selected items.
+   * @param {Object} item - The selected item.
+   */
+  const handleItemPress = (item) => {
+    // Verificar si el ítem ya está seleccionado
+    const itemIndex = itemsSeleccionados.findIndex((selectedItem) => selectedItem.key === item.key);
   
-  if (itemIndex !== -1) {
-    // Si está seleccionado, incrementar la cantidad
-    const newItemsSeleccionados = [...itemsSeleccionados];
-    newItemsSeleccionados[itemIndex] = {
-      ...newItemsSeleccionados[itemIndex],
-      cantidad: (newItemsSeleccionados[itemIndex].cantidad || 1) + 1,
-    };
-    setItemsSeleccionados(newItemsSeleccionados);
-  } else {
-    // Si no está seleccionado, añadirlo a la lista de ítems seleccionados
-    setItemsSeleccionados([...itemsSeleccionados, { ...item, cantidad: 1 }]);
-  }
-};
+    if (itemIndex !== -1) {
+      // Si está seleccionado, incrementar la cantidad
+      const newItemsSeleccionados = [...itemsSeleccionados];
+      newItemsSeleccionados[itemIndex] = {
+        ...newItemsSeleccionados[itemIndex],
+        cantidad: (newItemsSeleccionados[itemIndex].cantidad || 1) + 1,
+      };
+      setItemsSeleccionados(newItemsSeleccionados);
+    } else {
+      // Si no está seleccionado, añadirlo a la lista de ítems seleccionados
+      setItemsSeleccionados([...itemsSeleccionados, { ...item, cantidad: 1 }]);
+    }
+  };
+
   return (
     <ScrollShadow hideScrollBar offset={100} orientation="horizontal" className="max-w-[1200px] max-h-[600px] overflow-auto">
       <div className="gap-2 grid grid-cols-1 justify-center items-center w-[120px] h-[270px]">

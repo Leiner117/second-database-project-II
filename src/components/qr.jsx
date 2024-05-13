@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import jsQR from 'jsqr';
 
+/**
+ * QRScanner component for scanning QR codes.
+ *
+ * @param {Object} props - The component props.
+ * @param {Function} props.onQRCodeDetected - Callback function to be called when a QR code is detected.
+ * @returns {JSX.Element} The QRScanner component.
+ */
 function QRScanner({ onQRCodeDetected }) {
   const videoRef = useRef();
   const [isQRCodeDetected, setIsQRCodeDetected] = useState(false);

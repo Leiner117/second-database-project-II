@@ -2,6 +2,10 @@ import React from "react";
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Checkbox, Input, Link} from "@nextui-org/react";
 
 
+/**
+ * Component for adding a new client.
+ * @returns {JSX.Element} The rendered component.
+ */
 export default function App() {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const [nombre, setNombre] = React.useState("");
@@ -11,7 +15,10 @@ export default function App() {
   const [telefono, setTelefono] = React.useState("");
   const [correo, setCorreo] = React.useState("");
 
-
+  /**
+   * Function to add a new client.
+   * @returns {Promise<void>} A promise that resolves when the client is added successfully.
+   */
   const agregarCliente = async() => {
     try {
       const response = await fetch('http://localhost:5000/clientes', {
@@ -44,9 +51,9 @@ export default function App() {
   
     } catch (error) {
       console.error('Error:', error);
-      // Puedes manejar el error según tus necesidades, por ejemplo, mostrar un mensaje al usuario.
     }
   };
+
   return (
     <>
       <Button onPress={onOpen} color="primary">Agregar Clientes</Button>

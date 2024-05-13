@@ -22,6 +22,10 @@ const columns = [
   }
 ];
 
+/**
+ * Component for displaying a dynamic table with product items and a shopping cart.
+ *
+ */
 export default function App() {
   const [itemsSeleccionados, setItemsSeleccionados] = useState([]);
   const [productos, setProductos] = useState([]);
@@ -64,7 +68,6 @@ export default function App() {
     if (!qrCodeData) {
       return;
     }
-    console.log('QR code detected:', qrCodeData);
     onClose(); // Cierra el modal cuando se detecta un código QR
     try {
       const response = await fetch('http://localhost:5000/compra', {
@@ -88,7 +91,6 @@ export default function App() {
       }
   
       const data = await response.json();
-      console.log(data);
       window.location.reload();
   
     } catch (error) {

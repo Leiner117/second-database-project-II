@@ -3,6 +3,11 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKey
 
 
 
+/**
+ * Renders a table of products.
+ *
+ * @returns {JSX.Element} The rendered table component.
+ */
 export default function TablaClientes() {
   const [productos, setProductos] = useState([]);
 

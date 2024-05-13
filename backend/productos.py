@@ -7,6 +7,12 @@ productos = Blueprint('productos', __name__)
 #obtener todos los productos
 @productos.route('/productos', methods=['GET'])
 def obtener_datos_productos():
+    """
+    Retrieves data from the 'productos' table in the database.
+
+    Returns:
+        A JSON response containing the data retrieved from the 'productos' table.
+    """
     cursor.execute('SELECT * FROM productos')
     rows = cursor.fetchall()
     datos = [{'Codigo':row[0],'Nombre':row[1],'Cantidad':row[2],'Precio':row[3]} for row in rows]
@@ -15,6 +21,14 @@ def obtener_datos_productos():
 #enviar datos de productos
 @productos.route('/productos', methods=['POST'])
 def enviar_datos_productos():
+    """
+    Endpoint for sending product data to the database.
+
+    This function receives a JSON payload containing product data and inserts it into the 'productos' table in the database.
+
+    Returns:
+        A JSON response indicating the success or failure of the operation.
+    """
     with app.app_context():
         datos_nuevos = request.json.get('datos', [])
         print(datos_nuevos)
@@ -35,6 +49,12 @@ def enviar_datos_productos():
 #ELIMINAR PRODUCTO
 @productos.route('/productos', methods=['DELETE'])
 def eliminar_producto():
+    """
+    Endpoint to delete a product from the database.
+
+    Returns:
+        A JSON response indicating the success or failure of the operation.
+    """
     with app.app_context():
         datos_nuevos = request.json.get('datos', [])
         codigo = datos_nuevos[0]['codigo']
@@ -46,12 +66,19 @@ def eliminar_producto():
             conn.commit()
             return jsonify({'mensaje': 'Producto eliminado correctamente'})
         except Exception as e:
-             # Hacer rollback en caso de error
+            # Hacer rollback en caso de error
             return jsonify({'error': str(e)})
 
 #Agregar cantidad de PRODUCTO
 @productos.route('/productos', methods=['PUT'])
 def agregar_cantidad_producto():
+    """
+    Endpoint to update the quantity of a product in the database.
+
+    Returns:
+        A JSON response with a success message if the update is successful,
+        or an error message if there is an exception.
+    """
     with app.app_context():
         datos_nuevos = request.json.get('datos', [])
         codigo = datos_nuevos[0]['codigo']
@@ -65,5 +92,5 @@ def agregar_cantidad_producto():
             conn.commit()
             return jsonify({'mensaje': 'Cantidad de producto actualizada correctamente'})
         except Exception as e:
-             # Hacer rollback en caso de error
+            # Hacer rollback en caso de error
             return jsonify({'error': str(e)})

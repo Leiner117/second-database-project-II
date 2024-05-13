@@ -1,6 +1,9 @@
 import React from "react";
 import {Card, CardHeader, CardBody, Image} from "@nextui-org/react";
 
+/**
+ * Renders a component that displays information about team members in cards.
+ */
 export default function App() {
   return (
     <div className="flex flex-row justify-center min-h-screen">

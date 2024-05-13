@@ -3,6 +3,10 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKey
 
 
 
+/**
+ * Renders a table component that displays client data fetched from a server.
+ * @returns {JSX.Element} The rendered table component.
+ */
 export default function TablaClientes() {
   const [clientes, setClientes] = useState([]);
 

@@ -8,6 +8,20 @@ import json
 #Rebajar monedero
 @compra.route('/compra', methods=['POST'])
 def rebajar_monedero():
+    """
+    Endpoint for processing a purchase request and updating the wallet balance.
+
+    This function receives a POST request with purchase data in JSON format. It extracts the necessary information from the request, such as the customer's identification, the purchased products, and the total amount. Then, it calls a stored procedure to insert the sale into the database and update the wallet balance.
+
+    Parameters:
+    - None
+
+    Returns:
+    - JSON response with a success message if the wallet balance was successfully updated, or an error message if an exception occurred.
+
+    Raises:
+    - None
+    """
     with app.app_context():
         datos_nuevos = request.json.get('datos', [])
         #print(datos_nuevos)
