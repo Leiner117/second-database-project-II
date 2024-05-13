@@ -73,7 +73,6 @@ $$ LANGUAGE plpgsql;
 call aplicar_Recarga(208410988,2500 );
 
 
-
 CREATE OR REPLACE procedure aplicar_Rebaja(
     IN cedula_cliente INT,
     IN monto_Rebaja FLOAT
@@ -85,10 +84,10 @@ as $$
     EXCEPTION
         WHEN OTHERS THEN
             -- Manejar la excepción aquí, por ejemplo, lanzando un mensaje de error
-           RAISE EXCEPTION 'Error al recargar el monedero electrónico del cliente';
+           RAISE EXCEPTION 'Error al rebajar al monedero electrónico del cliente';
 END;
 $$ LANGUAGE plpgsql;
-call aplicar_Rebaja(208410988,2500);
+call aplicar_Rebaja(208410988,22000);
 
 
 
