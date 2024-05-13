@@ -5,27 +5,26 @@ EXEC sp_addlinkedsrvlogin 'comedor_central_linkedserver', 'true', NULL, 'postgre
 EXEC sp_serveroption @server='comedor_central_linkedserver', @optname='rpc out', @optvalue='true';
 
 -- Crear la tabla clientes en SQL Server
+
 CREATE TABLE dbo.clientes (
     cedula INT PRIMARY KEY,
     nombre VARCHAR(50),
     apellido1 VARCHAR(50),
     apellido2 VARCHAR(50),
     correo VARCHAR(100),
-    telefono VARCHAR(20),
-    codigoQR VARCHAR(100)
+    telefono VARCHAR(20)
 );
-
 CREATE PROCEDURE dbo.ActualizarClientes
 AS
 BEGIN
     -- Utilizar MERGE para insertar, actualizar o eliminar según corresponda
     MERGE clientes AS target
-    USING (SELECT cedula, nombre, apellido1, apellido2, correo, telefono, codigoQR
-           FROM OPENQUERY(comedor_central_linkedserver, 'SELECT cedula, nombre, apellido1, apellido2, correo, telefono, codigoQR FROM comedor."public".clientes')) AS source
+    USING (SELECT cedula, nombre, apellido1, apellido2, correo, telefono
+           FROM OPENQUERY(comedor_central_linkedserver, 'SELECT cedula, nombre, apellido1, apellido2, correo, telefono FROM comedor."public".clientes')) AS source
     ON (target.cedula = source.cedula)
     WHEN NOT MATCHED THEN 
-        INSERT (cedula, nombre, apellido1, apellido2, correo, telefono, codigoQR)
-        VALUES (source.cedula, source.nombre, source.apellido1, source.apellido2, source.correo, source.telefono, source.codigoQR);
+        INSERT (cedula, nombre, apellido1, apellido2, correo, telefono)
+        VALUES (source.cedula, source.nombre, source.apellido1, source.apellido2, source.correo, source.telefono);
 END;
 EXEC dbo.ActualizarClientes
 

@@ -20,12 +20,12 @@ create table clientes (
     apellido1 varchar(25) not null,
 	apellido2 varchar(25) not null,
     correo varchar(50) not null,
-	telefono varchar(20)not null,
-	codigoQR varchar(500) not null Unique
+	telefono varchar(20)not null
 );
-insert into clientes (cedula, nombre, apellido1, apellido2, correo, telefono, codigoQR)
-values (208410988,'Walter','Lazo','Gonzalez','wlksdfdsf','82392832',''),
-		(29990032,'Leiner','Alvarado','Rodriguez','sdfsdfjss','2313213213','--');
+
+insert into clientes (cedula, nombre, apellido1, apellido2, correo, telefono)
+values (208410988,'Walter','Lazo','Gonzalez','wlksdfdsf','82392832'),
+		(29990032,'Leiner','Alvarado','Rodriguez','sdfsdfjss','2313213213');
 
 create publication nuevosClientes for table clientes
 

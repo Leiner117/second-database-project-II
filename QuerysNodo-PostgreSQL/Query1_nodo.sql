@@ -15,8 +15,7 @@ create table clientes (
     apellido1 varchar(25) not null,
 	apellido2 varchar(25) not null,
     correo varchar(50) not null,
-	telefono varchar(20)not null,
-	codigoQR varchar(500) not null Unique
+	telefono varchar(20)not null
 );
 create subscription ingresoClientes connection 'host=localhost port=5432 dbname=comedor user=postgres password=admin' publication nuevosClientes
 
