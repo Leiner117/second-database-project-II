@@ -5,7 +5,6 @@ EXEC sp_addlinkedsrvlogin 'comedor_central_linkedserver', 'true', NULL, 'postgre
 EXEC sp_serveroption @server='comedor_central_linkedserver', @optname='rpc out', @optvalue='true';
 
 -- Crear la tabla clientes en SQL Server
-
 CREATE TABLE dbo.clientes (
     cedula INT PRIMARY KEY,
     nombre VARCHAR(50),
@@ -33,32 +32,40 @@ CREATE TABLE dbo.historico_Ventas (
     cedula_Cliente INT not null REFERENCES clientes(cedula),
     fecha DATETIME NOT NULL DEFAULT GETDATE(),
     descripcion VARCHAR(100) NOT NULL,
-    monto_total FLOAT NOT NULL
+    monto_total FLOAT NOT NULL,
+	productos_comprados NVARCHAR(MAX) not null
 );
+
+select * from dbo.historico_Ventas
 
 CREATE PROCEDURE dbo.InsertarVenta
     @cedula_Cliente INT,
+	@productos_comprados NVARCHAR(MAX),
     @descripcion VARCHAR(100),
     @monto_total FLOAT
 AS
 BEGIN
     SET NOCOUNT ON;
-
+	DECLARE @sql NVARCHAR(MAX);
     DECLARE @siguiente_venta_id INT;
+	 -- Convertir NVARCHAR JSON a formato adecuado para PostgreSQL (JSONB)
+    DECLARE @productos_jsonb NVARCHAR(MAX);
+    SET @productos_jsonb = '{"codigo": "' + PARSENAME(REPLACE(JSON_VALUE(@productos_comprados, '$.codigo'), '"', ''), 1) + '", "cantidad": ' + PARSENAME(REPLACE(JSON_VALUE(@productos_comprados, '$.cantidad'), '"', ''), 1) + '}';
 
    -- Obtener el próximo valor de la secuencia desde el servidor central PostgreSQL
     SELECT @siguiente_venta_id = siguiente_valor
     FROM OPENQUERY(comedor_central_linkedserver, 'SELECT obtener_siguiente_valor_secuencia() AS siguiente_valor');
 
     -- Insertar datos en la tabla historico_Ventas usando el siguiente valor de la secuencia
-    INSERT INTO historico_Ventas (venta_id, cedula_Cliente, fecha, descripcion, monto_total)
-    VALUES (@siguiente_venta_id, @cedula_Cliente, GETDATE(), @descripcion, @monto_total);
+    INSERT INTO historico_Ventas (venta_id, cedula_Cliente, fecha, descripcion, monto_total,productos_comprados)
+    VALUES (@siguiente_venta_id, @cedula_Cliente, GETDATE(), @descripcion, @monto_total,@productos_comprados);
 
-	INSERT INTO comedor_central_linkedserver.comedor."public".historico_ventas (venta_id, cedula_Cliente, descripcion, monto_total)
-	VALUES (@siguiente_venta_id, @cedula_Cliente, @descripcion, @monto_total);
+	INSERT INTO comedor_central_linkedserver.comedor."public".historico_ventas (venta_id, cedula_Cliente, descripcion, monto_total,productos_comprados)
+	VALUES (@siguiente_venta_id, @cedula_Cliente, @descripcion, @monto_total,@productos_jsonb);
+
 END;
 -- Llamar al procedimiento InsertarVenta con los valores proporcionados
-EXEC dbo.InsertarVenta 208410988, 'Cafe', 1200;
+EXEC dbo.InsertarVenta 208410988, '{"codigo": "producto1", "cantidad": 2}','venta' ,5000;
 
 
 CREATE PROCEDURE dbo.aplicar_Recarga_SQL
@@ -102,8 +109,6 @@ BEGIN
 END;
 
 Exec dbo.aplicar_Rebaja_SQL 208410988, 2500
-
-
 
 create table dbo.productos (
     Codigo varchar(25) PRIMARY KEY,

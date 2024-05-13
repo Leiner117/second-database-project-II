@@ -22,35 +22,55 @@ create subscription ingresoClientes connection 'host=localhost port=5432 dbname=
 select * from clientes
 -- Histórico de Ventas
 
-create table historico_Ventas (
-    venta_id int Primary key,
-    cedula_Cliente int not null REFERENCES clientes(cedula),
-    fecha timestamp not null default now(),
-    descripcion varchar(100) not null,
-	monto_total float not null
+drop table historico_Ventas
+CREATE TABLE historico_Ventas (
+    venta_id SERIAL PRIMARY KEY,
+    cedula_Cliente INT NOT NULL REFERENCES clientes(cedula),
+    fecha TIMESTAMP NOT NULL DEFAULT NOW(),
+    descripcion VARCHAR(100) NOT NULL,
+    monto_total FLOAT NOT NULL,
+    productos_comprados JSONB not null
 );
 
-CREATE OR REPLACE procedure insertar_venta(
+CREATE OR REPLACE PROCEDURE insertar_venta(
     IN cedula_cliente INT,
+    IN productos_comprados JSONB,
     IN descripcion VARCHAR(100),
     IN monto_total FLOAT
 )
-as $$
-declare
+AS $$
+DECLARE
     siguiente_valor INT;
+    producto_info JSONB;
+    producto_codigo VARCHAR(25);
+    producto_cantidad INT;
 BEGIN
-    Select valor_dblink into siguiente_valor
-	FROM dblink('comedor_central_pfw', 'SELECT obtener_siguiente_valor_secuencia()')AS t(valor_dblink INT);
+    -- Obtener el siguiente valor de la secuencia
+    SELECT valor_dblink INTO siguiente_valor
+    FROM dblink('comedor_central_pfw', 'SELECT obtener_siguiente_valor_secuencia()') AS t(valor_dblink INT);
+
     -- Insertar el nuevo registro en la tabla historico_ventas
-	
-    INSERT INTO historico_ventas (venta_id, cedula_cliente, descripcion, monto_total)
-    VALUES (siguiente_valor, cedula_cliente, descripcion, monto_total);
+    INSERT INTO historico_ventas (venta_id, cedula_cliente, descripcion, monto_total, productos_comprados)
+    VALUES (siguiente_valor, cedula_cliente, descripcion, monto_total, productos_comprados);
+
+    -- Actualizar la cantidad disponible de productos
+    FOR producto_codigo, producto_cantidad IN
+    SELECT key::varchar, value::int
+    FROM jsonb_each_text(productos_comprados)
+    LOOP
+        UPDATE productos
+        SET cantidad_disponible = cantidad_disponible - producto_cantidad
+        WHERE codigo = producto_codigo;
+    END LOOP; -- Cierre del bucle LOOP
+
+    CALL aplicar_Rebaja(cedula_cliente,monto_total);
+
 END;
 $$ LANGUAGE plpgsql;
+call insertar_venta(208410988,'{"A231": 2, "A23": 3}', 'Venta', 2000);
 
-call insertar_venta(208410988, 'Cena', 2600);
-select * from historico_ventas
 
+drop publication NuevasVentas
 create publication NuevasVentas for table historico_Ventas
 --insert into historico_Ventas(descripcion, monto_total)values('venta de almuerzo',2500)
 
@@ -69,7 +89,7 @@ as $$
 	commit;
 END;
 $$ LANGUAGE plpgsql;
-call aplicar_Recarga(208410988,2500 );
+call aplicar_Recarga(208410988,5500 );
 
 
 CREATE OR REPLACE procedure aplicar_Rebaja(
@@ -88,7 +108,7 @@ END;
 $$ LANGUAGE plpgsql;
 call aplicar_Rebaja(208410988,22000);
 
-
+select * from historico_Ventas
 
 create table productos (
     Codigo varchar(25) PRIMARY KEY,
@@ -96,3 +116,9 @@ create table productos (
 	cantidad_Disponible int not null default(0),
     Precio int not null default (0)
 );
+insert into productos(Codigo,Nombre,cantidad_Disponible,Precio)values('A231','Arroz',15,2000)
+insert into productos(Codigo,Nombre,cantidad_Disponible,Precio)values('A23','Frijoles',15,2000)
+
+select * from productos
+
+

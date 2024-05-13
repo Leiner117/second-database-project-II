@@ -75,12 +75,14 @@ LANGUAGE plpgsql;
 select * from Monedero_Electronico
 
 -- Histórico de Ventas
-create table historico_Ventas (
-    venta_id int Primary key,
-    cedula_Cliente int not null REFERENCES clientes(cedula),
-    fecha timestamp not null default now(),
-    descripcion varchar(100) not null,
-	monto_total float not null
+drop table historico_Ventas
+CREATE TABLE historico_Ventas (
+    venta_id SERIAL PRIMARY KEY,
+    cedula_Cliente INT NOT NULL REFERENCES clientes(cedula),
+    fecha TIMESTAMP NOT NULL DEFAULT NOW(),
+    descripcion VARCHAR(100) NOT NULL,
+    monto_total FLOAT NOT NULL,
+    productos_comprados JSONB not null
 );
 CREATE SEQUENCE secuencia_clave_primaria;
 CREATE OR REPLACE FUNCTION obtener_siguiente_valor_secuencia()
@@ -93,6 +95,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+drop subscription ingresoVentas
 create subscription ingresoVentas connection 'host=localhost port=5433 dbname=NodoComedor user=postgres password=admin123' publication NuevasVentas
 
 select * from historico_Ventas
@@ -106,5 +109,5 @@ create table promociones (
     fecha_inicio date NOT NULL,
     fecha_fin date NOT NULL,
     nodo_id int, -- ID del nodo específico al que está asociada la promoción
-    FOREIGN KEY (nodo_id) REFERENCES Nodos(nodo_id) -- Suponiendo que exista una tabla de Nodos
+    FOREIGN KEY (nodo_id) REFERENCES nodos(nodo_id) -- Suponiendo que exista una tabla de Nodos
 );
